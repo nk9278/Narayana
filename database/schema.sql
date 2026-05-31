@@ -35,6 +35,16 @@ CREATE TABLE user_sessions (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE password_resets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    is_used BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (email) REFERENCES users(email) ON DELETE CASCADE
+);
+
 -- Products
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
