@@ -5,9 +5,14 @@ include_once __DIR__ . '/includes/sidebar.php';
 
 // Fetch Dynamic Admin Metrics
 $totalRevenue = $pdo->query("SELECT SUM(final_amount) FROM orders WHERE status != 'cancelled'")->fetchColumn() ?: 0;
+$monthlyRevenue = $pdo->query("SELECT SUM(final_amount) FROM orders WHERE status != 'cancelled' AND MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())")->fetchColumn() ?: 0;
 $totalOrders = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
 $activeSchemes = $pdo->query("SELECT COUNT(*) FROM scheme_enrollments WHERE status = 'active'")->fetchColumn();
 $totalCustomers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+
+// Low Stock Alert
+$lowStockCount = $pdo->query("SELECT COUNT(*) FROM product_inventory WHERE stock_quantity <= 5")->fetchColumn();
+$pendingInstallments = $pdo->query("SELECT COUNT(*) FROM scheme_installments WHERE status = 'pending'")->fetchColumn();
 ?>
 
 <!-- Admin Dashboard Content -->
@@ -24,8 +29,8 @@ $totalCustomers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
                 <i class="fas fa-rupee-sign"></i>
             </div>
             <div>
-                <p class="text-gray-500 text-sm font-medium">Total Revenue</p>
-                <h3 class="text-2xl font-bold text-gray-800">₹<?php echo number_format($totalRevenue, 2); ?></h3>
+                <p class="text-gray-500 text-xs uppercase tracking-wider font-medium">Monthly Rev.</p>
+                <h3 class="text-2xl font-bold text-gray-800">₹<?php echo number_format($monthlyRevenue, 0); ?></h3>
             </div>
         </div>
 
@@ -34,7 +39,7 @@ $totalCustomers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
                 <i class="fas fa-shopping-bag"></i>
             </div>
             <div>
-                <p class="text-gray-500 text-sm font-medium">Total Orders</p>
+                <p class="text-gray-500 text-xs uppercase tracking-wider font-medium">Total Orders</p>
                 <h3 class="text-2xl font-bold text-gray-800"><?php echo number_format($totalOrders); ?></h3>
             </div>
         </div>
@@ -44,7 +49,7 @@ $totalCustomers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
                 <i class="fas fa-piggy-bank"></i>
             </div>
             <div>
-                <p class="text-gray-500 text-sm font-medium">Active Schemes</p>
+                <p class="text-gray-500 text-xs uppercase tracking-wider font-medium">Active Schemes</p>
                 <h3 class="text-2xl font-bold text-gray-800"><?php echo number_format($activeSchemes); ?></h3>
             </div>
         </div>
@@ -54,10 +59,39 @@ $totalCustomers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
                 <i class="fas fa-users"></i>
             </div>
             <div>
-                <p class="text-gray-500 text-sm font-medium">Total Customers</p>
+                <p class="text-gray-500 text-xs uppercase tracking-wider font-medium">Customers</p>
                 <h3 class="text-2xl font-bold text-gray-800"><?php echo number_format($totalCustomers); ?></h3>
             </div>
         </div>
+    </div>
+
+    <!-- Operational Alerts -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <a href="/admin/inventory.php" class="bg-red-50 rounded-xl p-4 border border-red-100 flex items-center justify-between hover:bg-red-100 transition-colors">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-red-800">Low Stock Alert</h4>
+                    <p class="text-xs text-red-600"><?php echo $lowStockCount; ?> products require immediate restocking.</p>
+                </div>
+            </div>
+            <i class="fas fa-chevron-right text-red-400"></i>
+        </a>
+
+        <a href="/admin/schemes.php" class="bg-orange-50 rounded-xl p-4 border border-orange-100 flex items-center justify-between hover:bg-orange-100 transition-colors">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mr-3">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-orange-800">Pending Installments</h4>
+                    <p class="text-xs text-orange-600"><?php echo $pendingInstallments; ?> installments are awaiting payment.</p>
+                </div>
+            </div>
+            <i class="fas fa-chevron-right text-orange-400"></i>
+        </a>
     </div>
 
     <!-- Quick Actions & Stats -->

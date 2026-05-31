@@ -61,5 +61,39 @@ class Notifier {
     public static function notifyOrderPlaced($user, $order) {
         self::sendEmail($user['email'], "Order Confirmed - #" . $order['id'], 'order_placed', ['order' => $order]);
         self::sendSms($user['phone'], "Thank you for your purchase! Your order #" . $order['id'] . " has been placed.");
+        // Notify admin
+        self::sendAdminAlert("New Order Received: #" . $order['id']);
+    }
+
+    /**
+     * Helper to send Installment Reminders
+     */
+    public static function notifyInstallmentReminder($user, $scheme, $amountDue) {
+        self::sendEmail($user['email'], "Installment Due - " . $scheme['name'], 'installment_reminder', ['scheme' => $scheme, 'amount' => $amountDue]);
+        self::sendSms($user['phone'], "Reminder: Your installment of ₹{$amountDue} for {$scheme['name']} is due soon. Pay online to reserve gold at today's rate.");
+    }
+
+    /**
+     * Helper to send Maturity Alerts
+     */
+    public static function notifySchemeMaturity($user, $scheme) {
+        self::sendEmail($user['email'], "Congratulations! Your Scheme has Matured", 'scheme_matured', ['scheme' => $scheme]);
+        self::sendSms($user['phone'], "Congrats! Your {$scheme['name']} has matured. You can now redeem your accumulated gold online.");
+    }
+
+    /**
+     * Notify Admins of Low Stock
+     */
+    public static function notifyLowStock($productName, $sku, $currentStock) {
+        self::sendAdminAlert("Low Stock Alert: {$productName} (SKU: {$sku}) is down to {$currentStock} units.");
+    }
+
+    /**
+     * Central Admin Alert Helper
+     */
+    private static function sendAdminAlert($message) {
+        // In production, this might send to a specific admin group email, a Slack webhook, or a WhatsApp group.
+        // self::sendEmail('admin@narayanjewelers.com', "Admin Alert", 'admin_alert', ['message' => $message]);
+        return true;
     }
 }
