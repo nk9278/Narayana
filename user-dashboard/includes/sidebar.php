@@ -11,19 +11,19 @@
         <a href="/user-dashboard/index.php" class="flex items-center px-4 py-3 bg-brand-wine text-white rounded-xl shadow-md transition-colors font-medium">
             <i class="fas fa-th-large w-6 text-brand-gold"></i> Dashboard
         </a>
-        <a href="#" class="flex items-center px-4 py-3 text-brand-wine hover:bg-brand-cultured rounded-xl transition-colors font-medium">
+        <a href="/user-dashboard/orders.php" class="flex items-center px-4 py-3 text-brand-wine hover:bg-brand-cultured rounded-xl transition-colors font-medium">
             <i class="fas fa-shopping-bag w-6 text-brand-gold/70"></i> My Orders
         </a>
-        <a href="#" class="flex items-center px-4 py-3 text-brand-wine hover:bg-brand-cultured rounded-xl transition-colors font-medium">
+        <a href="/wishlist.php" class="flex items-center px-4 py-3 text-brand-wine hover:bg-brand-cultured rounded-xl transition-colors font-medium">
             <i class="far fa-heart w-6 text-brand-gold/70"></i> Wishlist
         </a>
-        <a href="#" class="flex items-center px-4 py-3 text-brand-wine hover:bg-brand-cultured rounded-xl transition-colors font-medium">
+        <a href="/user-dashboard/schemes.php" class="flex items-center px-4 py-3 text-brand-wine hover:bg-brand-cultured rounded-xl transition-colors font-medium">
             <i class="fas fa-piggy-bank w-6 text-brand-gold/70"></i> Savings Schemes
         </a>
-        <a href="#" class="flex items-center px-4 py-3 text-brand-wine hover:bg-brand-cultured rounded-xl transition-colors font-medium">
+        <a href="/user-dashboard/addresses.php" class="flex items-center px-4 py-3 text-brand-wine hover:bg-brand-cultured rounded-xl transition-colors font-medium">
             <i class="far fa-address-card w-6 text-brand-gold/70"></i> Addresses
         </a>
-        <a href="#" class="flex items-center px-4 py-3 text-brand-wine hover:bg-brand-cultured rounded-xl transition-colors font-medium">
+        <a href="/user-dashboard/profile.php" class="flex items-center px-4 py-3 text-brand-wine hover:bg-brand-cultured rounded-xl transition-colors font-medium">
             <i class="far fa-user w-6 text-brand-gold/70"></i> Profile Details
         </a>
     </nav>

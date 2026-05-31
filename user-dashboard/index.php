@@ -79,8 +79,15 @@ if(isset($_SESSION['user_id'])) {
     <div class="bg-white rounded-3xl shadow-sm border border-brand-gold/20 overflow-hidden mb-10">
         <div class="px-6 py-5 border-b border-brand-gold/10 flex justify-between items-center bg-brand-wine/5">
             <h3 class="font-bold text-brand-wine text-lg">Recent Orders</h3>
-            <a href="#" class="text-brand-gold text-sm font-medium hover:text-brand-wine transition-colors">View All</a>
+            <a href="/user-dashboard/orders.php" class="text-brand-gold text-sm font-medium hover:text-brand-wine transition-colors">View All</a>
         </div>
+        <?php
+        $recentOrders = $pdo->prepare("SELECT id, total_amount, status, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT 3");
+        $recentOrders->execute([$_SESSION['user_id']]);
+        $orders = $recentOrders->fetchAll();
+
+        if (empty($orders)):
+        ?>
         <div class="p-8 text-center">
             <div class="w-20 h-20 bg-brand-cultured rounded-full flex items-center justify-center mx-auto mb-4 text-brand-gold/50">
                 <i class="fas fa-shopping-bag text-3xl"></i>
@@ -90,6 +97,38 @@ if(isset($_SESSION['user_id'])) {
                 Start Shopping
             </a>
         </div>
+        <?php else: ?>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-white text-brand-wine/50 text-xs uppercase tracking-wider border-b border-brand-gold/10">
+                        <th class="px-6 py-4 font-medium">Order ID</th>
+                        <th class="px-6 py-4 font-medium">Date</th>
+                        <th class="px-6 py-4 font-medium">Total</th>
+                        <th class="px-6 py-4 font-medium">Status</th>
+                        <th class="px-6 py-4 font-medium text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm text-brand-wine">
+                    <?php foreach ($orders as $order): ?>
+                    <tr class="border-b border-brand-gold/5 hover:bg-brand-cultured/30 transition-colors">
+                        <td class="px-6 py-4 font-medium">#<?php echo str_pad($order['id'], 6, '0', STR_PAD_LEFT); ?></td>
+                        <td class="px-6 py-4 text-brand-wine/70"><?php echo date('M j, Y', strtotime($order['created_at'])); ?></td>
+                        <td class="px-6 py-4 font-bold">₹<?php echo number_format($order['total_amount'], 2); ?></td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider <?php echo $order['status'] === 'delivered' ? 'bg-green-100 text-green-700' : ($order['status'] === 'pending' ? 'bg-orange-100 text-orange-700' : 'bg-brand-gold/20 text-brand-wine'); ?>">
+                                <?php echo htmlspecialchars($order['status']); ?>
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="/user-dashboard/order-details.php?id=<?php echo $order['id']; ?>" class="text-brand-gold font-medium hover:text-brand-wine transition-colors text-sm">View Details</a>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endif; ?>
     </div>
 
 </main>

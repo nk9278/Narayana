@@ -81,17 +81,18 @@ $variants = $stmt->fetchAll();
                 <h1 class="text-3xl md:text-4xl font-bold text-brand-wine mb-4 leading-tight"><?php echo htmlspecialchars($product['name']); ?></h1>
 
                 <div class="flex items-end gap-4 mb-6">
-                    <span class="text-3xl font-bold text-brand-wine">₹<?php echo number_format($product['base_price'], 2); ?></span>
-                    <span class="text-sm text-brand-wine/50 font-light pb-1">(Price may vary based on live gold rates)</span>
+                    <span id="display-price" class="text-3xl font-bold text-brand-wine">₹<?php echo number_format($product['base_price'], 2); ?></span>
+                    <span class="text-sm text-brand-wine/50 font-light pb-1">(Price based on live gold rates & making charges)</span>
                 </div>
 
                 <div class="prose prose-sm text-brand-wine/80 font-light mb-8 max-w-none">
                     <p><?php echo nl2br(htmlspecialchars($product['description'])); ?></p>
                 </div>
 
-                <form method="POST" action="cart.php" class="space-y-8 mt-auto">
+                <form id="add-to-cart-form" method="POST" action="api/cart.php" class="space-y-8 mt-auto">
                     <input type="hidden" name="action" value="add">
                     <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
 
                     <?php if (!empty($variants)): ?>
                     <div>
@@ -99,7 +100,7 @@ $variants = $stmt->fetchAll();
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             <?php foreach ($variants as $index => $variant): ?>
                                 <label class="cursor-pointer">
-                                    <input type="radio" name="variant_id" value="<?php echo $variant['id']; ?>" class="peer sr-only" <?php echo $index === 0 ? 'checked' : ''; ?>>
+                                    <input type="radio" name="variant_id" value="<?php echo $variant['id']; ?>" class="peer sr-only variant-radio" data-additional-price="<?php echo htmlspecialchars($variant['additional_price']); ?>" <?php echo $index === 0 ? 'checked' : ''; ?>>
                                     <div class="text-center py-3 px-4 rounded-xl border border-brand-gold/30 text-brand-wine text-sm hover:bg-brand-cultured peer-checked:border-brand-wine peer-checked:bg-brand-wine peer-checked:text-white transition-all">
                                         <?php echo htmlspecialchars($variant['weight_grams']); ?>g <br>
                                         <span class="text-xs opacity-70"><?php echo htmlspecialchars($variant['purity']); ?></span>
@@ -114,10 +115,11 @@ $variants = $stmt->fetchAll();
                         <button type="submit" class="flex-1 bg-brand-wine text-white py-4 rounded-xl font-medium shadow-lg hover:bg-brand-burgundy hover:shadow-brand-wine/30 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center">
                             <i class="fas fa-shopping-bag mr-2 text-brand-gold"></i> Add to Cart
                         </button>
-                        <button type="button" class="w-14 h-14 bg-white border border-brand-gold/30 text-brand-wine rounded-xl flex items-center justify-center hover:bg-brand-cultured hover:text-red-500 hover:border-red-200 transition-all shadow-sm">
-                            <i class="far fa-heart text-xl"></i>
+                        <button type="button" onclick="addToWishlist(<?php echo $product['id']; ?>)" class="w-14 h-14 bg-white border border-brand-gold/30 text-brand-wine rounded-xl flex items-center justify-center hover:bg-brand-cultured hover:text-red-500 hover:border-red-200 transition-all shadow-sm">
+                            <i id="wishlist-icon-<?php echo $product['id']; ?>" class="far fa-heart text-xl"></i>
                         </button>
                     </div>
+                    <div id="cart-message" class="hidden text-sm font-medium mt-2"></div>
                 </form>
 
                 <div class="mt-8 grid grid-cols-2 gap-4 text-xs font-medium text-brand-wine/70 border border-brand-gold/10 bg-white rounded-2xl p-4">
@@ -131,5 +133,83 @@ $variants = $stmt->fetchAll();
         </div>
     </div>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const basePrice = <?php echo $product['base_price']; ?>;
+    const priceDisplay = document.getElementById('display-price');
+    const variantRadios = document.querySelectorAll('.variant-radio');
+
+    function updatePrice() {
+        let additionalPrice = 0;
+        const selected = document.querySelector('.variant-radio:checked');
+        if (selected) {
+            additionalPrice = parseFloat(selected.dataset.additionalPrice) || 0;
+        }
+        const total = basePrice + additionalPrice;
+        priceDisplay.innerHTML = '₹' + total.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    variantRadios.forEach(radio => {
+        radio.addEventListener('change', updatePrice);
+    });
+
+    // Form submission AJAX
+    const form = document.getElementById('add-to-cart-form');
+    const cartMessage = document.getElementById('cart-message');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch('api/cart.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            cartMessage.classList.remove('hidden', 'text-red-600', 'text-green-600');
+            if (data.success) {
+                cartMessage.classList.add('text-green-600');
+                cartMessage.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Added to cart!';
+                // Update mini-cart icon number here if applicable
+            } else {
+                cartMessage.classList.add('text-red-600');
+                cartMessage.innerHTML = '<i class="fas fa-times-circle mr-1"></i> ' + (data.message || 'Error adding to cart.');
+            }
+        })
+        .catch(err => {
+            cartMessage.classList.remove('hidden');
+            cartMessage.classList.add('text-red-600');
+            cartMessage.innerHTML = '<i class="fas fa-times-circle mr-1"></i> Connection error.';
+        });
+    });
+});
+
+function addToWishlist(productId) {
+    const icon = document.getElementById('wishlist-icon-' + productId);
+    const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+
+    fetch('api/wishlist.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `action=toggle&product_id=${productId}&csrf_token=${encodeURIComponent(csrfToken)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.status === 'added') {
+                icon.classList.remove('far');
+                icon.classList.add('fas', 'text-red-500');
+            } else {
+                icon.classList.remove('fas', 'text-red-500');
+                icon.classList.add('far');
+            }
+        } else {
+            alert(data.message || 'Please login to use wishlist');
+        }
+    });
+}
+</script>
 
 <?php include_once __DIR__ . '/assets/includes/footer.php'; ?>

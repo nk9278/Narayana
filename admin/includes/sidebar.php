@@ -12,22 +12,28 @@
             <a href="/admin/index.php" class="bg-brand-burgundy text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg border border-brand-gold/10">
                 <i class="fas fa-home w-6 text-center mr-2"></i> Dashboard
             </a>
-            <a href="#" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
+            <a href="/admin/categories.php" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
+                <i class="fas fa-tags w-6 text-center mr-2 text-brand-gold/70 group-hover:text-brand-gold"></i> Categories
+            </a>
+            <a href="/admin/products.php" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
                 <i class="fas fa-box w-6 text-center mr-2 text-brand-gold/70 group-hover:text-brand-gold"></i> Products
             </a>
-            <a href="#" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
+            <a href="/admin/orders.php" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
                 <i class="fas fa-shopping-cart w-6 text-center mr-2 text-brand-gold/70 group-hover:text-brand-gold"></i> Orders
             </a>
-            <a href="#" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
+            <a href="/admin/coupons.php" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
+                <i class="fas fa-ticket-alt w-6 text-center mr-2 text-brand-gold/70 group-hover:text-brand-gold"></i> Coupons
+            </a>
+            <a href="/admin/schemes.php" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
                 <i class="fas fa-piggy-bank w-6 text-center mr-2 text-brand-gold/70 group-hover:text-brand-gold"></i> Savings Schemes
             </a>
-            <a href="#" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
+            <a href="/admin/gold-rates.php" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
                 <i class="fas fa-chart-line w-6 text-center mr-2 text-brand-gold/70 group-hover:text-brand-gold"></i> Live Gold Rates
             </a>
-            <a href="#" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
+            <a href="/admin/customers.php" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
                 <i class="fas fa-users w-6 text-center mr-2 text-brand-gold/70 group-hover:text-brand-gold"></i> Customers
             </a>
-            <a href="#" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
+            <a href="/admin/settings.php" class="text-white hover:bg-brand-burgundy hover:text-brand-gold group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors">
                 <i class="fas fa-cog w-6 text-center mr-2 text-brand-gold/70 group-hover:text-brand-gold"></i> Settings
             </a>
         </nav>
