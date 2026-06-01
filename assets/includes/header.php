@@ -18,7 +18,14 @@ if (empty($_SESSION['csrf_token'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Narayan Jewelers | Premium Collection</title>
+    <title><?php echo htmlspecialchars($page_title ?? 'Narayan Jewelers | Premium Collection'); ?></title>
+    <?php if (isset($page_description)): ?>
+    <meta name="description" content="<?php echo htmlspecialchars($page_description); ?>">
+    <meta property="og:description" content="<?php echo htmlspecialchars($page_description); ?>">
+    <?php endif; ?>
+    <meta property="og:title" content="<?php echo htmlspecialchars($page_title ?? 'Narayan Jewelers'); ?>">
+    <meta property="og:type" content="website">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
